@@ -36,7 +36,7 @@
 	<div class="w3-third">
 	  <div class="w3-card w3-container" style="min-height:460px">
 	  <h3>Items</h3><br>
-	  <i onclick="showItems()" class="fa fa-refresh w3-margin-bottom w3-text-theme" style="font-size:80px" title="Show/Refresh Item List"></i>
+	  <i onclick="showItems()" class="fa fa-refresh w3-margin-bottom w3-text-theme" style="font-size:80px" title="Show Item List"></i>
 	  <h6 class="w3-text-indigo"><a href="#ccc">category color codes</a></h6>
 		  <table id="tbl_items" class="w3-table w3-striped w3-bordered">
 			<thead>
@@ -152,45 +152,49 @@ var categories = ['bathroom','kitchen','travel','leisure','home','garden'];
 
 function showPMI() {
   var tblItems = document.getElementById('tbl_pmi');
-  var dbRef = firebase.database().ref('stat/country/');
-  var rowIndex = 1;  
-  dbRef.once('value', function(snapshot) {
-	snapshot.forEach(function(childSnapshot) { 
-	   var childKey = childSnapshot.key;
-	   var childData = childSnapshot.val();
-	   var users=childData.users;
-	   if (users>=100) {
-		   var row = tblItems.insertRow(rowIndex);
-		   var cellId = row.insertCell(0);
-		   var cellName = row.insertCell(1);
-		   var cellUsers = row.insertCell(2);
-		   var pmi=Math.round((600-(childData.pmi/users))/6);
-		   cellId.appendChild(document.createTextNode(childKey));
-		   cellName.appendChild(document.createTextNode(pmi));
-		   cellUsers.appendChild(document.createTextNode(users)); 
-		   rowIndex = rowIndex + 1;
-	   }
-	});
-  });
+  if (tblItems.rows.length<2) {
+	  var dbRef = firebase.database().ref('stat/country/');
+	  var rowIndex = 1;  
+	  dbRef.once('value', function(snapshot) {
+		snapshot.forEach(function(childSnapshot) { 
+		   var childKey = childSnapshot.key;
+		   var childData = childSnapshot.val();
+		   var users=childData.users;
+		   if (users>=100) {
+			   var row = tblItems.insertRow(rowIndex);
+			   var cellId = row.insertCell(0);
+			   var cellName = row.insertCell(1);
+			   var cellUsers = row.insertCell(2);
+			   var pmi=Math.round((600-(childData.pmi/users))/6);
+			   cellId.appendChild(document.createTextNode(childKey));
+			   cellName.appendChild(document.createTextNode(pmi));
+			   cellUsers.appendChild(document.createTextNode(users)); 
+			   rowIndex = rowIndex + 1;
+		   }
+		});
+	  });
+  }
 }
 
 function showItems() {
   var tblItems = document.getElementById('tbl_items');
-  var dbRef = firebase.database().ref('stat/items/');
-  var rowIndex = 1;  
-  dbRef.once('value', function(snapshot) {
-	snapshot.forEach(function(childSnapshot) { 
-	   var childKey = childSnapshot.key;
-	   var childData = childSnapshot.val();
-	   var row = tblItems.insertRow(rowIndex);
-	   var cellId = row.insertCell(0);
-	   var cellName = row.insertCell(1);
-	   cellId.appendChild(document.createTextNode(childKey));
-	   cellName.appendChild(document.createTextNode(childData.done)); 
-	   row.className+=" "+categories[parseInt(itemCats.indexOf(childKey)/25)]; //console.log(childKey+" "+itemCats.indexOf(childKey));
-	   rowIndex = rowIndex + 1;
-	});
-  });
+  if (tblItems.rows.length<2) {
+	  var dbRef = firebase.database().ref('stat/items/');
+	  var rowIndex = 1;  
+	  dbRef.once('value', function(snapshot) {
+		snapshot.forEach(function(childSnapshot) { 
+		   var childKey = childSnapshot.key;
+		   var childData = childSnapshot.val();
+		   var row = tblItems.insertRow(rowIndex);
+		   var cellId = row.insertCell(0);
+		   var cellName = row.insertCell(1);
+		   cellId.appendChild(document.createTextNode(childKey));
+		   cellName.appendChild(document.createTextNode(childData.done)); 
+		   row.className+=" "+categories[parseInt(itemCats.indexOf(childKey)/25)]; //console.log(childKey+" "+itemCats.indexOf(childKey));
+		   rowIndex = rowIndex + 1;
+		});
+	  });
+  }
 }
 
 function sortItems(n,type,tbl,direction) {
@@ -202,8 +206,7 @@ function sortItems(n,type,tbl,direction) {
   while (switching) {
     switching = false; // Start by saying: no switching is done
     rows = table.rows;
-    if (type=='text') {
-    	
+    if (type=='text') {	
 		/* Loop through all table rows (except the first, which contains table headers): */
 		for (i = 1; i < (rows.length - 1); i++) {  
 		  shouldSwitch = false; // Start by saying there should be no switching
@@ -226,7 +229,6 @@ function sortItems(n,type,tbl,direction) {
 		  }
 		}
 	} else { /* numbers */
-	    
 		for (i = 1; i < (rows.length - 1); i++) {
 		  shouldSwitch = false;
 		  x = rows[i].getElementsByTagName("TD")[n];
@@ -260,6 +262,9 @@ function sortItems(n,type,tbl,direction) {
       if (switchcount == 0 && dir == "asc") {
         dir = "desc";
         switching = true;
+      } else if (switchcount == 0 && dir == "desc") {
+        dir = "asc";
+        switching = true;
       }
     }
   }
@@ -267,38 +272,40 @@ function sortItems(n,type,tbl,direction) {
 
 function showChallenges() {
   var tblUsers = document.getElementById('tbl_challenges');
-  var months_arr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var databaseRef = firebase.database().ref('challenges/'); 
-  var rowIndex = 1;  
-  databaseRef.once('value', function(snapshot) {
-	snapshot.forEach(function(childSnapshot) {
-	   var childKey = childSnapshot.key;
-	   var childData = childSnapshot.val(); 
-	   var row = tblUsers.insertRow(rowIndex);
-	   row.setAttribute( "onClick", "show('ch"+childKey+"')" );
-	   var cellName = row.insertCell(0);
-	   var cellTime = row.insertCell(1);
-	   //cellId.appendChild(document.createTextNode(childKey));
-	   cellName.appendChild(document.createTextNode(childData.titleen+" ⬍"));
-	   var date = new Date(childData.time); 
-       var year = date.getFullYear();
-	   var month = months_arr[date.getMonth()];
-	   var day = date.getDate();
- 	   // var hours = date.getHours();var minutes = "0" + date.getMinutes();var seconds = "0" + date.getSeconds();
-		var time = month+'-'+day+'-'+year; 
-	   //+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
-	   cellTime.appendChild(document.createTextNode(time)); 
-	   rowIndex++;
-	   childData.items.forEach(function(i) {
-			row = tblUsers.insertRow(rowIndex);
-			row.className = "ch"+childKey+" w3-hide";
-			cellName = row.insertCell(0);
-			cellName.appendChild(document.createTextNode(i.en));
-			cellName.className+=" "+i.cat;
-			rowIndex++;
-	   });
-	});
-  });
+  if (tblUsers.rows.length<2) {
+	  var months_arr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	  var databaseRef = firebase.database().ref('challenges/'); 
+	  var rowIndex = 1;  
+	  databaseRef.once('value', function(snapshot) {
+		snapshot.forEach(function(childSnapshot) {
+		   var childKey = childSnapshot.key;
+		   var childData = childSnapshot.val(); 
+		   var row = tblUsers.insertRow(rowIndex);
+		   row.setAttribute( "onClick", "show('ch"+childKey+"')" );
+		   var cellName = row.insertCell(0);
+		   var cellTime = row.insertCell(1);
+		   //cellId.appendChild(document.createTextNode(childKey));
+		   cellName.appendChild(document.createTextNode(childData.titleen+" ⬍"));
+		   var date = new Date(childData.time); 
+		   var year = date.getFullYear();
+		   var month = months_arr[date.getMonth()];
+		   var day = date.getDate();
+		   // var hours = date.getHours();var minutes = "0" + date.getMinutes();var seconds = "0" + date.getSeconds();
+			var time = month+'-'+day+'-'+year; 
+		   //+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+		   cellTime.appendChild(document.createTextNode(time)); 
+		   rowIndex++;
+		   childData.items.forEach(function(i) {
+				row = tblUsers.insertRow(rowIndex);
+				row.className = "ch"+childKey+" w3-hide";
+				cellName = row.insertCell(0);
+				cellName.appendChild(document.createTextNode(i.en));
+				cellName.className+=" "+i.cat;
+				rowIndex++;
+		   });
+		});
+	  });
+  }
 }
 
   // Side navigation
@@ -326,10 +333,9 @@ function showChallenges() {
 //   }
 //   document.getElementById(cityName).style.display = "block";
 //   evt.currentTarget.className += " w3-dark-grey";
-// }
-
-var mybtn = document.getElementsByClassName("testbtn")[0];
-mybtn.click();
+// } 
+// var mybtn = document.getElementsByClassName("testbtn")[0];
+// mybtn.click();
 
 // Accordions
 function myAccFunc(id) {
