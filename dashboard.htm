@@ -11,23 +11,23 @@
 		<link rel="stylesheet" href="black.css">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 
-<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/manifest.json">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
+		<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+		<link rel="manifest" href="/manifest.json">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
 
 		<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-database.js"></script>
@@ -79,7 +79,8 @@
 			<thead>
 			  <tr class="w3-theme">
 				<th>Title</th>
-				<th>Deadline</th>				
+				<th>Deadline</th>
+                <th>Done</th>
 			  </tr>
 			</thead>
 			<tbody>
@@ -300,9 +301,11 @@ function showChallenges() {
 		   var childKey = childSnapshot.key;
 		   var childData = childSnapshot.val(); 
 		   var row = tblUsers.insertRow(rowIndex);
+           //row.id="r"+childKey; console.log("r"+childKey);
 		   row.setAttribute( "onClick", "show('ch"+childKey+"')" );
 		   var cellName = row.insertCell(0);
 		   var cellTime = row.insertCell(1);
+           var cellDone = row.insertCell(2);    
 		   //cellId.appendChild(document.createTextNode(childKey));
 		   cellName.appendChild(document.createTextNode(childData.titleen+" ↕"));
 		   var date = new Date(childData.time); 
@@ -313,7 +316,11 @@ function showChallenges() {
 			var time = month+'-'+day+'-'+year; 
 		   //+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 		   cellTime.appendChild(document.createTextNode(time)); 
-		   rowIndex++;
+           var db = firebase.database().ref('stat/challenges/'+childKey+'/done/');
+           db.once('value', function(completed) {
+		      cellDone.appendChild(document.createTextNode(completed.val()));
+           });      
+           rowIndex++;    
 		   childData.items.forEach(function(i) {
 				row = tblUsers.insertRow(rowIndex);
 				row.className = "ch"+childKey+" w3-hide";
