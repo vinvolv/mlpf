@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  		<title>My Little Plastic Footprint Dashboard</title>
+
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="styles.css">
+		<link rel="stylesheet" href="black.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+		<link rel="manifest" href="/manifest.json">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-database.js"></script>
+        <script>
+		  var firebaseConfig = {
+			authDomain: "plastic-diet.firebaseapp.com",
+			databaseURL: "https://plastic-diet.firebaseio.com",
+			projectId: "plastic-diet",
+		  };
+		  firebase.initializeApp(firebaseConfig);
+        </script>
+    </head>
+
+<body>
+
+	<header class="w3-container w3-theme w3-padding" id="myHeader">
+	  <div class="w3-center">
+	  <h4>My Little Plastic Footprint</h4>
+	  <h1 id="coname" class="w3-xxxlarge w3-animate-bottom cap">APP DASHBOARD</h1>
+	  </div>
+	</header>
+
+<div class="w3-row-padding w3-center w3-margin-top">
+
+	<div class="w3-third">
+	  <div class="w3-card w3-container" style="min-height:460px">
+	  <h3>Items</h3><br>
+	  <i onclick="showItems()" class="fa fa-refresh w3-margin-bottom w3-text-theme" style="font-size:80px" title="Show Item List"></i>
+	  <h6 class="w3-text-indigo"><a href="#ccc">category color codes</a></h6>
+		  <table id="tbl_items" class="w3-table w3-striped w3-bordered">
+			<thead>
+			  <tr class="w3-theme">
+				<th onclick="sortItems(0,'text','tbl_items','asc')">Name&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				<th onclick="sortItems(1,'int','tbl_items','desc')">Done&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
+			  </tr>
+			</thead>
+			<tbody>
+			</tbody>
+		  </table>  
+	  </div>
+	</div>
+
+	<div class="w3-third">
+	  <div class="w3-card w3-container" style="min-height:460px">
+		  <h3>Challenges</h3><br>
+	  	  <i onclick="showChallenges()" class="fa fa-refresh w3-margin-bottom w3-text-theme" style="font-size:80px" title="Show Challenge List"></i>
+	  	  <!--<h6 class="w3-text-indigo">click titles for challenge items</h6>-->
+		  <table id="tbl_challenges" class="w3-table w3-striped w3-bordered">
+			<thead>
+			  <tr class="w3-theme">
+				<th>Number</th>
+				<th><!--Deadline--></th>
+                <th>Done</th>
+			  </tr>
+			</thead>
+			<tbody>
+			</tbody>
+		  </table>
+	  </div>
+	</div>
+
+
+	<div class="w3-third">
+	  <div class="w3-card w3-container" style="min-height:460px">
+	  <h3>Leaderboard</h3><br>
+	  <i onclick="showPMI()" class="fa fa-refresh w3-margin-bottom w3-text-theme" style="font-size:80px" title="Show Country PMI List"></i>
+	  <h6 class="w3-text-indigo">Our Users' Plastic Mass Index and Quiz Scores</h6>
+		  <table id="tbl_pmi" class="w3-table w3-striped w3-bordered">
+			<thead>
+			  <tr class="w3-theme">
+				<th onclick="sortItems(0,'text','tbl_pmi','asc')">User&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				<th onclick="sortItems(1,'int','tbl_pmi','asc')">PMI&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				<th onclick="sortItems(2,'int','tbl_pmi','desc')">Score&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
+			  </tr>
+			</thead>
+			<tbody>
+			</tbody>
+		  </table>  
+	  
+	  </div>
+	</div>
+	
+</div>
+
+<div class="w3-container">
+<hr>
+<div class="w3-center" id="ccc">
+  <h2>Category Color Codes</h2>
+</div>
+
+<div class="w3-row">
+  <div class="w3-col w3-container m2 home"><p>Home</p></div>
+  <div class="w3-col w3-container m2 garden"><p>Garden</p></div>
+  <div class="w3-col w3-container m2 travel"><p>Travel</p></div>
+  <div class="w3-col w3-container m2 leisure"><p>Leisure</p></div>
+  <div class="w3-col w3-container m2 kitchen"><p>Kitchen</p></div>
+  <div class="w3-col w3-container m2 bathroom"><p>Bathroom</p></div>
+</div>
+
+<hr>
+<!--<h2 class="w3-center">Progress Bars</h2>
+<div class="w3-container">
+	<div class="w3-light-gray">
+	  <div id="myBar" class="w3-center w3-padding w3-theme" style="width:5%">5%</div>
+	</div><br>
+	<button class="w3-btn w3-theme" onclick="move()">Click Me</button> 
+</div>
+<hr>
+<h2 class="w3-center">Tabs</h2>
+<div class="w3-border">
+	<div class="w3-bar w3-theme">
+	  <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'London')">London</button>
+	  <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'Paris')">Paris</button>
+	  <button class="w3-bar-item w3-button testbtn w3-padding-16" onclick="openCity(event,'Tokyo')">Tokyo</button>
+	</div>
+
+	<div id="tab1" class="w3-container city w3-animate-opacity">
+	  <h2>Items</h2>
+	  <p>...</p>
+	</div>
+
+	<div id="tab2" class="w3-container city w3-animate-opacity">
+	  <h2>Challenges</h2>
+	  <p>...</p> 
+	</div>
+
+	<div id="tab3" class="w3-container city w3-animate-opacity">
+	  <h2>PMI</h2>
+	  <p>...</p>
+	  <p>...</p>
+	</div>
+</div>-->
+</div>
+
+<footer class="w3-container w3-theme-dark w3-padding-16">
+  <p>2022 © Plastic Soup Foundation</p>
+</footer>
+
+<script>
+var companyName=window.location.pathname.split("/")[4];
+document.getElementById('coname').innerHTML=companyName+" Dashboard";       
+    
+    
+var itemCats = ['Cosmetics, personal care','Soaps & shampoos','Wet wipes','Make-up remover pads','Cotton buds','Toothbrush','Tongue cleaner','Dental floss','Tampons and pads','Plastic duckies','Contact Lens','Exfoliator loofah, sponges','Razor','Moisturizers','Hair brushes, combs','Shower curtain','Toilet brush','Toilet Paper','','','','','','','','Plastic grocery bag','Produce bag','Plastic bread bag','Plastic containers','Water boiler','Tea bags','Plastic-wrap','Convenience food','Baby bottles','Plastic nipple','Dish brush, sponge','Plastic spatulas','Cutting board','Plastic cutlery','Coffee capsules','Non-stick pans','Kitchen paper tissues','Egg containers','','','','','','','','To go cups','Plastic lids','Plastic bottles','Plastic straws','Plastic Bag on-the-go','Take away food','Plastic sandwich bag','Plastic wrapped paper tissues','Plastic Cutlery on-the-go','Travel-size bottles','Snacks','Headphones','Earplugs','Plastic wrap for your luggage','Giveaways','Tyres','Microfiber travel towels','','','','','','','','','Cocktail straws','Plastic bag','Toiletries in hotel','Sunscreen with microplastics','Plastic cup','Glitter','Single-use plastic cutlery','Meat wrapped in plastic','Single-use BBQ','Skewers','Plastic wrap','Cigarette butts','Lighter','Balloons','Chewing gum','Wine stopper','Beach toys','Wrapping presents','Plastic confetti','Other party accessories','Ice cream','Camping','Flip Flops','','','Carpets and rugs','Curtains','Synthetic materials','Laundry','Clothes with glitter','Powder detergents','Bed cloth','Dryer','Plastic laundry clippers','Diapers','Dog waste bag','Mattress or sofa','Washing machine filter','','','','','','','','','','','','','Single-use plastic pots','Plastic pots','Wrap Flowers','Plastic plants','Plant labels','Gardening tools','Watering Can','Synthetic grass','Plastified binding wire','Plastic fence, lawn edge','Plastic furniture','Vegetable garden','Compost','Growing plants','','','','','','','','','','',''];
+var categories = ['bathroom','kitchen','travel','leisure','home','garden'];
+
+function showPMI() {
+  var tblItems = document.getElementById('tbl_pmi');
+  if (tblItems.rows.length<2) {
+	  var dbRef = firebase.database().ref('stat/company/'+companyName+'/users/');
+	  var rowIndex = 1;  
+	  dbRef.once('value', function(snapshot) {
+		snapshot.forEach(function(childSnapshot) { 
+		   var childKey = childSnapshot.key;
+		   var childData = childSnapshot.val();
+		   var users=childData.diet;
+		   if (users) {
+			   var row = tblItems.insertRow(rowIndex);
+			   var cellId = row.insertCell(0);
+			   var cellName = row.insertCell(1);
+			   var cellUsers = row.insertCell(2);
+			   var pmi=100-Math.round((600-(childData.diet.pmi))/6);
+               var username=childKey;
+               var username=childKey.split('@')[0];
+			   cellId.appendChild(document.createTextNode(username));
+			   cellName.appendChild(document.createTextNode(pmi));
+               var score=0;
+			   if (childData.quiz) {
+                   score=childData.quiz.score;
+               }
+               cellUsers.appendChild(document.createTextNode(score)); 
+               //cellUsers.appendChild(document.createTextNode(childData.quiz.score)); 
+			   rowIndex = rowIndex + 1;
+		   }
+		});
+	  });
+  }
+}
+
+function showItems() {
+  var tblItems = document.getElementById('tbl_items');
+  if (tblItems.rows.length<2) {
+	  var dbRef = firebase.database().ref('stat/company/'+companyName+'/items/');
+	  var rowIndex = 1;  
+	  dbRef.once('value', function(snapshot) {
+		snapshot.forEach(function(childSnapshot) { 
+		   var childKey = childSnapshot.key;
+		   var childData = childSnapshot.val();
+		   var row = tblItems.insertRow(rowIndex);
+		   var cellId = row.insertCell(0);
+		   var cellName = row.insertCell(1);
+		   cellId.appendChild(document.createTextNode(childKey));
+		   cellName.appendChild(document.createTextNode(childData.done)); 
+		   row.className+=" "+categories[parseInt(itemCats.indexOf(childKey)/25)]; //console.log(childKey+" "+itemCats.indexOf(childKey));
+		   rowIndex = rowIndex + 1;
+		});
+	  });
+  }
+}
+
+function sortItems(n,type,tbl,direction) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById(tbl);
+  dir=direction;
+  switching = true;
+  /* Make a loop that will continue until no switching has been done: */
+  while (switching) {
+    switching = false; // Start by saying: no switching is done
+    rows = table.rows;
+    if (type=='text') {	
+		/* Loop through all table rows (except the first, which contains table headers): */
+		for (i = 1; i < (rows.length - 1); i++) {  
+		  shouldSwitch = false; // Start by saying there should be no switching
+		  /* Get the two elements you want to compare, one from current row and one from the next: */
+		  x = rows[i].getElementsByTagName("TD")[n];
+		  y = rows[i + 1].getElementsByTagName("TD")[n];
+		  /* Check if the two rows should switch place, based on the direction, asc or desc: */
+		  if (dir == "asc") {
+			if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+			  // If so, mark as a switch and break the loop:
+			  shouldSwitch = true;
+			  break;
+			}
+		  } else if (dir == "desc") {
+			if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+			  // If so, mark as a switch and break the loop:
+			  shouldSwitch = true;
+			  break;
+			}
+		  }
+		}
+	} else { /* numbers */
+		for (i = 1; i < (rows.length - 1); i++) {
+		  shouldSwitch = false;
+		  x = rows[i].getElementsByTagName("TD")[n];
+		  y = rows[i + 1].getElementsByTagName("TD")[n];
+		  if (dir == "asc") {
+			if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
+			  // If so, mark as a switch and break the loop:
+			  shouldSwitch = true;
+			  break;
+			}
+		  } else if (dir == "desc") {
+			if (parseInt(x.innerHTML) < parseInt(y.innerHTML)) {
+			  // If so, mark as a switch and break the loop:
+			  shouldSwitch = true;
+			  break;
+			}
+		  }
+		}
+	
+	}
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++; 
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      } else if (switchcount == 0 && dir == "desc") {
+        dir = "asc";
+        switching = true;
+      }
+    }
+  }
+}
+
+function showChallenges() {
+  var tblUsers = document.getElementById('tbl_challenges');
+  if (tblUsers.rows.length<2) {
+	  var months_arr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	  var databaseRef = firebase.database().ref('stat/company/'+companyName+'/challenges/'); console.log('stat/company/'+companyName+'/challenges/');
+	  var rowIndex = 1;  
+	  databaseRef.once('value', function(snapshot) {
+		snapshot.forEach(function(childSnapshot) {
+		   var childKey = childSnapshot.key;
+		   var childData = childSnapshot.val(); 
+		   var row = tblUsers.insertRow(rowIndex);
+           //row.id="r"+childKey; console.log("r"+childKey);
+		   row.setAttribute( "onClick", "show('ch"+childKey+"')" );
+		   var cellName = row.insertCell(0);
+		   var cellTime = row.insertCell(1);
+           var cellDone = row.insertCell(2);    
+		   //cellId.appendChild(document.createTextNode(childKey));
+		   //cellName.appendChild(document.createTextNode(childKey)); console.log(childKey);
+		   //var date = new Date(childData.time); 
+		   //var year = date.getFullYear();
+		   //var month = months_arr[date.getMonth()];
+		   //var day = date.getDate();
+		   // var hours = date.getHours();var minutes = "0" + date.getMinutes();var seconds = "0" + date.getSeconds();
+          //var time = month+'-'+day+'-'+year; 
+		   //+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+		   //cellTime.appendChild(document.createTextNode(time)); 
+           var db = firebase.database().ref('challenges/'+childKey+'/titleen');
+           db.once('value', function(title) {cellName.appendChild(document.createTextNode(title.val()));});      
+            
+           cellDone.appendChild(document.createTextNode(childData.done)); 
+           rowIndex++;    
+//		   childData.items.forEach(function(i) {
+//				row = tblUsers.insertRow(rowIndex);
+//				row.className = "ch"+childKey+" w3-hide";
+//				cellName = row.insertCell(0);
+//				//cellName.appendChild(document.createTextNode(i.en));
+//				cellName.className+=" "+i.cat;
+//				rowIndex++;
+//		   });
+		});
+	  });
+  }
+}
+
+  // Side navigation
+// function w3_open() {
+//   var x = document.getElementById("mySidebar");
+//   x.style.width = "100%";
+//   x.style.fontSize = "40px";
+//   x.style.paddingTop = "10%";
+//   x.style.display = "block";
+// }
+// function w3_close() {
+//   document.getElementById("mySidebar").style.display = "none";
+// }
+
+  // Tabs
+// function openCity(evt, cityName) {
+//   var i;
+//   var x = document.getElementsByClassName("city");
+//   for (i = 0; i < x.length; i++) {
+//     x[i].style.display = "none";
+//   }
+//   var activebtn = document.getElementsByClassName("testbtn");
+//   for (i = 0; i < x.length; i++) {
+//     activebtn[i].className = activebtn[i].className.replace(" w3-dark-grey", "");
+//   }
+//   document.getElementById(cityName).style.display = "block";
+//   evt.currentTarget.className += " w3-dark-grey";
+// } 
+// var mybtn = document.getElementsByClassName("testbtn")[0];
+// mybtn.click();
+
+// Accordions
+function myAccFunc(id) {
+  var x = document.getElementById(id);
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+
+function show(cl) {
+	var x = document.getElementsByClassName(cl);
+	for (i = 0; i < x.length; i++) {
+	  if (x[i].className.indexOf("w3-show") == -1) {
+		x[i].className += " w3-show";
+	  } else { 
+		x[i].className = x[i].className.replace(" w3-show", "");
+	  }	  
+	} 
+}
+
+// Slideshows
+// var slideIndex = 1;
+// 
+// function plusDivs(n) {
+//   slideIndex = slideIndex + n;
+//   showDivs(slideIndex);
+// }
+// 
+// function showDivs(n) {
+//   var x = document.getElementsByClassName("mySlides");
+//   if (n > x.length) {slideIndex = 1}    
+//   if (n < 1) {slideIndex = x.length} ;
+//   for (i = 0; i < x.length; i++) {
+//     x[i].style.display = "none";  
+//   }
+//   x[slideIndex-1].style.display = "block";  
+// }
+// 
+// showDivs(1);
+
+// Progress Bars
+// function move() {
+//   var elem = document.getElementById("myBar");   
+//   var width = 5;
+//   var id = setInterval(frame, 10);
+//   function frame() {
+//     if (width == 100) {
+//       clearInterval(id);
+//     } else {
+//       width++; 
+//       elem.style.width = width + '%'; 
+//       elem.innerHTML = width * 1  + '%';
+//     }
+//   }
+// }
+</script>
+
+
+    
+</body>
+</html>
